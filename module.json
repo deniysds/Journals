@@ -1,0 +1,30 @@
+{
+    "name": "Journals",
+    "alias": "journals",
+    "description": "Master Data Jurnal & Tim Redaksi",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Journals\\Providers\\JournalsServiceProvider"
+    ],
+    "files": [],
+    "menu": {
+        "main": [
+            {
+                "title": "Journals",
+                "path": "journals",
+                "icon": "ki-filled ki-book text-lg",
+                "classes": "",
+                "attributes": [],
+                "permission": "journals.read",
+                "roles": [
+                    "administrator",
+                    "editor-in-chief",
+                    "journal-manager"
+                ]
+            }
+        ],
+        "master": [],
+        "system": []
+    }
+}
