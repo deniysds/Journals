@@ -1,11 +1,7 @@
 @extends('layouts.main')
 
 @section('breadcrumbs')
-    <ul class="flex items-center gap-2 text-sm text-gray-600">
-        <li><a href="/" class="hover:text-primary">{{ __('usermanagement::app.dashboard') ?? 'Dashboard' }}</a></li>
-        <li><span>/</span></li>
-        <li class="font-semibold text-gray-800">{{ __('journals::app.journals') }}</li>
-    </ul>
+    {{ Breadcrumbs::render('journals') }}
 @endsection
 
 @section('content')
@@ -138,51 +134,67 @@
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                     },
+                    mapResponse: function (response) {
+                        if (response && response.data) {
+                            return {
+                                data: response.data,
+                                totalCount: response.totalCount || response.recordsTotal || response.data.length,
+                                page: response.page || 1,
+                                pageSize: response.pageSize || 10,
+                                totalPages: response.pageCount || Math.ceil((response.totalCount || response.data.length) / (response.pageSize || 10)),
+                            };
+                        }
+                        return { data: [], totalCount: 0, page: 1, pageSize: 10, totalPages: 1 };
+                    },
                     columns: {
                         select: {
-                            render: function (item) {
-                                var disabledAttr = !item.can_delete ? 'disabled' : '';
-                                return '<input class="kt-checkbox kt-checkbox-sm row-checkbox" type="checkbox" value="' + item.id + '" ' + disabledAttr + ' data-can-delete="' + (item.can_delete ? '1' : '0') + '" onchange="updateBulkDeleteState()">';
+                            render: function (value, row) {
+                                var disabledAttr = (row && !row.can_delete) ? 'disabled' : '';
+                                var rowId = row ? row.id : '';
+                                return '<input class="kt-checkbox kt-checkbox-sm row-checkbox" type="checkbox" value="' + rowId + '" ' + disabledAttr + ' onchange="updateBulkDeleteState()">';
                             }
                         },
                         name: {
-                            render: function (item) {
-                                var showUrl = "{{ route('journals.show', ':id') }}".replace(':id', item.id);
-                                return '<div class="flex flex-col"><a href="' + showUrl + '" class="font-semibold text-gray-900 hover:text-primary-600">' + (item.name || '-') + '</a><span class="text-xs text-gray-500">' + (item.slug || '') + '</span></div>';
+                            render: function (value, row) {
+                                if (!row) return value || '-';
+                                var showUrl = "{{ route('journals.show', ':id') }}".replace(':id', row.id);
+                                return '<div class="flex flex-col"><a href="' + showUrl + '" class="font-semibold text-gray-900 hover:text-primary-600">' + (row.name || '-') + '</a><span class="text-xs text-gray-500">' + (row.slug || '') + '</span></div>';
                             }
                         },
                         short_name: {
-                            render: function (item) {
-                                return item.short_name || '-';
+                            render: function (value, row) {
+                                return (row ? row.short_name : value) || '-';
                             }
                         },
                         issn_p: {
-                            render: function (item) {
-                                return item.issn_p || '-';
+                            render: function (value, row) {
+                                return (row ? row.issn_p : value) || '-';
                             }
                         },
                         issn_e: {
-                            render: function (item) {
-                                return item.issn_e || '-';
+                            render: function (value, row) {
+                                return (row ? row.issn_e : value) || '-';
                             }
                         },
                         is_active: {
-                            render: function (item) {
-                                if (item.is_active) {
+                            render: function (value, row) {
+                                var isActive = row ? row.is_active : value;
+                                if (isActive) {
                                     return '<span class="kt-badge kt-badge-sm kt-badge-light-success">' + "{{ __('journals::app.active') }}" + '</span>';
                                 }
                                 return '<span class="kt-badge kt-badge-sm kt-badge-light-danger">' + "{{ __('journals::app.inactive') }}" + '</span>';
                             }
                         },
                         actions: {
-                            render: function (item) {
-                                var editUrl = "{{ route('journals.edit', ':id') }}".replace(':id', item.id);
+                            render: function (value, row) {
+                                if (!row) return '';
+                                var editUrl = "{{ route('journals.edit', ':id') }}".replace(':id', row.id);
                                 var html = '<div class="flex items-center justify-center gap-1.5">';
 
                                 html += '<a href="' + editUrl + '" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-600 hover:text-primary-600" title="' + lang.edit + '"><i class="ki-filled ki-pencil"></i></a>';
 
-                                if (item.can_delete) {
-                                    html += '<button type="button" onclick="deleteJournal(' + item.id + ')" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-600 hover:text-danger-600" title="Delete"><i class="ki-filled ki-trash"></i></button>';
+                                if (row.can_delete) {
+                                    html += '<button type="button" onclick="deleteJournal(' + row.id + ')" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-600 hover:text-danger-600" title="Delete"><i class="ki-filled ki-trash"></i></button>';
                                 } else {
                                     html += '<button type="button" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-300 cursor-not-allowed" disabled title="' + lang.cannotDeleteHasRelations + '"><i class="ki-filled ki-trash"></i></button>';
                                 }
@@ -190,6 +202,11 @@
                                 html += '</div>';
                                 return html;
                             }
+                        }
+                    },
+                    callbacks: {
+                        afterDraw: function () {
+                            updateBulkDeleteState();
                         }
                     }
                 });

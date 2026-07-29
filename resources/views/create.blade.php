@@ -1,13 +1,7 @@
 @extends('layouts.main')
 
 @section('breadcrumbs')
-    <ul class="flex items-center gap-2 text-sm text-gray-600">
-        <li><a href="/" class="hover:text-primary">Dashboard</a></li>
-        <li><span>/</span></li>
-        <li><a href="{{ route('journals.index') }}" class="hover:text-primary">{{ __('journals::app.journals') }}</a></li>
-        <li><span>/</span></li>
-        <li class="font-semibold text-gray-800">{{ isset($journal) ? __('journals::app.edit_journal') : __('journals::app.add_journal') }}</li>
-    </ul>
+    {{ Breadcrumbs::render(isset($journal) ? 'journals.edit' : 'journals.create', $journal ?? null) }}
 @endsection
 
 @section('content')
