@@ -13,7 +13,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Journals Resource CRUD
     Route::resource('journals', JournalsController::class)->names('journals');
 
-    // Editorial Board Routes
+    // Editorial Board Routes & Datatables
+    Route::get('editorial-boards/datatables', [EditorialBoardController::class, 'dataForDatatables'])->name('editorial-boards.datatables');
+    Route::post('editorial-boards/bulk-destroy', [EditorialBoardController::class, 'bulkDestroy'])->name('editorial-boards.bulk-destroy');
+    Route::get('editorial-boards/export', [EditorialBoardController::class, 'export'])->name('editorial-boards.export');
+    Route::get('editorial-boards', [EditorialBoardController::class, 'index'])->name('editorial-boards.index');
     Route::post('editorial-boards', [EditorialBoardController::class, 'store'])->name('editorial-boards.store');
     Route::put('editorial-boards/{editorial_board}', [EditorialBoardController::class, 'update'])->name('editorial-boards.update');
     Route::delete('editorial-boards/{editorial_board}', [EditorialBoardController::class, 'destroy'])->name('editorial-boards.destroy');

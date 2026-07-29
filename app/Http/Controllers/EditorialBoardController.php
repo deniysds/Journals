@@ -18,6 +18,28 @@ class EditorialBoardController extends Controller
         $this->editorialBoardService = $editorialBoardService;
     }
 
+    public function index()
+    {
+        $user = Auth::user();
+        if (!$user || !$user->can('journals.read')) {
+            abort(403, 'Sorry! You are not allowed to view editorial boards.');
+        }
+
+        $journals = \Modules\Journals\Models\Journal::where('is_active', true)->get();
+
+        return view('journals::editorial-boards.index', compact('journals'));
+    }
+
+    public function dataForDatatables(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || !$user->can('journals.read')) {
+            return response()->json(['message' => 'Sorry! You are not allowed to view editorial boards.', 'success' => false], 403);
+        }
+
+        return response()->json($this->editorialBoardService->getDatatableData($request));
+    }
+
     public function store(EditorialBoardRequest $request)
     {
         $user = Auth::user();
@@ -54,5 +76,27 @@ class EditorialBoardController extends Controller
 
         $result = $this->editorialBoardService->deleteMember((int) $id);
         return response()->json(['message' => $result['message'], 'success' => $result['success']], $result['code']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || !$user->can('journals.update')) {
+            return response()->json(['message' => 'Sorry! You are not allowed to delete editorial members.', 'success' => false], 403);
+        }
+
+        $ids = $request->input('ids', []);
+        $result = $this->editorialBoardService->bulkDeleteMembers($ids);
+        return response()->json(['message' => $result['message'], 'success' => $result['success']], $result['code']);
+    }
+
+    public function export(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || !$user->can('journals.export')) {
+            abort(403, 'Sorry! You are not allowed to export editorial boards data.');
+        }
+
+        return $this->editorialBoardService->exportMembers($request->get('search'));
     }
 }

@@ -26,3 +26,9 @@ Breadcrumbs::for('journals.edit', function (BreadcrumbTrail $trail, $journal) {
     $trail->parent('journals');
     $trail->push(__('journals::app.edit_journal'));
 });
+
+// Main Editorial Board Breadcrumb
+Breadcrumbs::for('editorial-boards', function (BreadcrumbTrail $trail) {
+    $trail->parent('journals');
+    $trail->push(__('journals::app.editorial_board'), route('editorial-boards.index'));
+});
