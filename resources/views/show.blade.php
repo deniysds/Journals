@@ -105,8 +105,8 @@
                                     <td class="text-center font-mono text-xs">{{ $member->order_no }}</td>
                                     <td class="text-center">
                                         @can('journals.update')
-                                            <button type="button" onclick="deleteMember({{ $member->id }})" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-danger-600 hover:bg-danger-50" title="Delete">
-                                                <i class="ki-filled ki-trash"></i>
+                                            <button type="button" onclick="deleteMember({{ $member->id }})" class="kt-btn kt-btn-xs kt-btn-icon kt-btn-ghost text-danger" title="Delete">
+                                                <i class="ki-filled ki-trash text-danger text-base"></i>
                                             </button>
                                         @endcan
                                     </td>

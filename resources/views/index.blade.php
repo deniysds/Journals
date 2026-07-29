@@ -12,17 +12,15 @@
                     <h3 class="kt-card-title">{{ __('journals::app.journals_list') }}</h3>
                 </div>
                 <div class="flex items-center gap-2.5">
-                    <input
-                        type="text"
-                        placeholder="{{ __('journals::app.search') }}"
-                        class="kt-input sm:w-48"
-                        id="search_journals"
-                        data-kt-datatable-search="#kt_datatable_journals"
-                    />
-                    <button type="button" class="kt-btn kt-btn-sm kt-btn-danger hidden" id="bulk_delete_btn" onclick="bulkDelete()">
-                        <i class="ki-filled ki-trash text-white"></i> {{ __('journals::app.delete_selected') }} (<span id="selected_count">0</span>)
+                    <input type="text" placeholder="{{ __('journals::app.search') }}" class="kt-input sm:w-48"
+                        id="search_journals" data-kt-datatable-search="#kt_datatable_journals" />
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-danger hidden" id="bulk_delete_btn"
+                        onclick="bulkDelete()">
+                        <i class="ki-filled ki-trash text-white"></i> {{ __('journals::app.delete_selected') }} (<span
+                            id="selected_count">0</span>)
                     </button>
-                    <a class="kt-btn kt-btn-sm kt-btn-outline" id="export_btn" href="{{ route('journals.export') }}" target="_blank">
+                    <a class="kt-btn kt-btn-sm kt-btn-outline" id="export_btn" href="{{ route('journals.export') }}"
+                        target="_blank">
                         <i class="ki-filled ki-file-down"></i> {{ __('journals::app.export') }}
                     </a>
                     @can('journals.create')
@@ -32,36 +30,44 @@
                     @endcan
                 </div>
             </div>
-            <div
-                id="kt_datatable_journals"
-                class="kt-card-table"
-                data-kt-datatable-page-size="10"
-                data-kt-datatable-state-save="true"
-            >
+            <div id="kt_datatable_journals" class="kt-card-table" data-kt-datatable-page-size="10"
+                data-kt-datatable-state-save="true">
                 <div class="kt-table-wrapper kt-scrollable">
                     <table class="kt-table" data-kt-datatable-table="true">
                         <thead>
                             <tr>
-                                <th scope="col" class="w-14 text-center" data-kt-datatable-column="select">
-                                    <input class="kt-checkbox kt-checkbox-sm" id="check_all" data-kt-datatable-check="true" type="checkbox" />
+                                <th scope="col" class="w-14" data-kt-datatable-column="select">
+                                    <input class="kt-checkbox kt-checkbox-sm" id="check_all" data-kt-datatable-check="true"
+                                        type="checkbox" />
                                 </th>
                                 <th scope="col" class="w-48" data-kt-datatable-column="name">
-                                    <span class="kt-table-col"><span class="kt-table-col-label">{{ __('journals::app.name') }}</span><span class="kt-table-col-sort"></span></span>
+                                    <span class="kt-table-col"><span
+                                            class="kt-table-col-label">{{ __('journals::app.name') }}</span><span
+                                            class="kt-table-col-sort"></span></span>
                                 </th>
                                 <th scope="col" class="w-32" data-kt-datatable-column="short_name">
-                                    <span class="kt-table-col"><span class="kt-table-col-label">{{ __('journals::app.short_name') }}</span><span class="kt-table-col-sort"></span></span>
+                                    <span class="kt-table-col"><span
+                                            class="kt-table-col-label">{{ __('journals::app.short_name') }}</span><span
+                                            class="kt-table-col-sort"></span></span>
                                 </th>
                                 <th scope="col" class="w-36" data-kt-datatable-column="issn_p">
-                                    <span class="kt-table-col"><span class="kt-table-col-label">{{ __('journals::app.issn_p') }}</span><span class="kt-table-col-sort"></span></span>
+                                    <span class="kt-table-col"><span
+                                            class="kt-table-col-label">{{ __('journals::app.issn_p') }}</span><span
+                                            class="kt-table-col-sort"></span></span>
                                 </th>
                                 <th scope="col" class="w-36" data-kt-datatable-column="issn_e">
-                                    <span class="kt-table-col"><span class="kt-table-col-label">{{ __('journals::app.issn_e') }}</span><span class="kt-table-col-sort"></span></span>
+                                    <span class="kt-table-col"><span
+                                            class="kt-table-col-label">{{ __('journals::app.issn_e') }}</span><span
+                                            class="kt-table-col-sort"></span></span>
                                 </th>
                                 <th scope="col" class="w-28 text-center" data-kt-datatable-column="is_active">
-                                    <span class="kt-table-col"><span class="kt-table-col-label">{{ __('journals::app.status') }}</span><span class="kt-table-col-sort"></span></span>
+                                    <span class="kt-table-col"><span
+                                            class="kt-table-col-label">{{ __('journals::app.status') }}</span><span
+                                            class="kt-table-col-sort"></span></span>
                                 </th>
                                 <th scope="col" class="w-24 text-center" data-kt-datatable-column="actions">
-                                    <span class="kt-table-col"><span class="kt-table-col-label">{{ __('journals::app.actions') }}</span></span>
+                                    <span class="kt-table-col"><span
+                                            class="kt-table-col-label">{{ __('journals::app.actions') }}</span></span>
                                 </th>
                             </tr>
                         </thead>
@@ -72,7 +78,8 @@
                 <template><!--begin:pagination--></template>
                 <div class="kt-datatable-toolbar">
                     <div class="kt-datatable-length">
-                        Show<select class="kt-select kt-select-sm w-16" name="perpage" data-kt-datatable-size="true"></select>per page
+                        Show<select class="kt-select kt-select-sm w-16" name="perpage"
+                            data-kt-datatable-size="true"></select>per page
                     </div>
                     <div class="kt-datatable-info">
                         <span data-kt-datatable-info="true"></span>
@@ -191,12 +198,12 @@
                                 var editUrl = "{{ route('journals.edit', ':id') }}".replace(':id', row.id);
                                 var html = '<div class="flex items-center justify-center gap-1.5">';
 
-                                html += '<a href="' + editUrl + '" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-600 hover:text-primary-600" title="' + lang.edit + '"><i class="ki-filled ki-pencil"></i></a>';
+                                html += '<a href="' + editUrl + '" class="kt-btn kt-btn-xs kt-btn-icon kt-btn-ghost text-warning" title="' + lang.edit + '"><i class="ki-filled ki-pencil text-warning text-base"></i></a>';
 
                                 if (row.can_delete) {
-                                    html += '<button type="button" onclick="deleteJournal(' + row.id + ')" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-600 hover:text-danger-600" title="Delete"><i class="ki-filled ki-trash"></i></button>';
+                                    html += '<button type="button" onclick="deleteJournal(' + row.id + ')" class="kt-btn kt-btn-xs kt-btn-icon kt-btn-ghost text-danger" title="Delete"><i class="ki-filled ki-trash text-danger text-base"></i></button>';
                                 } else {
-                                    html += '<button type="button" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost text-gray-300 cursor-not-allowed" disabled title="' + lang.cannotDeleteHasRelations + '"><i class="ki-filled ki-trash"></i></button>';
+                                    html += '<button type="button" class="kt-btn kt-btn-xs kt-btn-icon kt-btn-ghost opacity-30 cursor-not-allowed text-gray-400" disabled title="' + lang.cannotDeleteHasRelations + '"><i class="ki-filled ki-trash text-gray-400 text-base"></i></button>';
                                 }
 
                                 html += '</div>';
