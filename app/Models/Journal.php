@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use Modules\Submissions\Models\Submission;
 
 /**
  * Class Journal
@@ -60,10 +61,18 @@ class Journal extends Model
     }
 
     /**
+     * Relationship to Submissions.
+     */
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(Submission::class, 'journal_id');
+    }
+
+    /**
      * Check if journal has active relations that prevent deletion.
      */
     public function hasActiveRelations(): bool
     {
-        return $this->editorialBoards()->exists();
+        return $this->editorialBoards()->exists() || $this->submissions()->exists();
     }
 }

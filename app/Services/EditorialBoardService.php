@@ -32,6 +32,28 @@ class EditorialBoardService
     }
 
     /**
+     * Check if a user is an active editor for a given journal.
+     */
+    public function isEditor(int $journalId, int $userId): bool
+    {
+        return JournalEditorialBoard::where('journal_id', $journalId)
+            ->where('user_id', $userId)
+            ->where('is_active', true)
+            ->exists();
+    }
+
+    /**
+     * Get all journal IDs assigned to an editor user.
+     */
+    public function getAssignedJournalIds(int $userId): array
+    {
+        return JournalEditorialBoard::where('user_id', $userId)
+            ->where('is_active', true)
+            ->pluck('journal_id')
+            ->toArray();
+    }
+
+    /**
      * Get paginated & filtered data for KTUI DataTable.
      */
     public function getDatatableData(\Illuminate\Http\Request $request): array
