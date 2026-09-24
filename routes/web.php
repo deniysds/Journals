@@ -21,4 +21,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('editorial-boards', [EditorialBoardController::class, 'store'])->name('editorial-boards.store');
     Route::put('editorial-boards/{editorial_board}', [EditorialBoardController::class, 'update'])->name('editorial-boards.update');
     Route::delete('editorial-boards/{editorial_board}', [EditorialBoardController::class, 'destroy'])->name('editorial-boards.destroy');
+
+    // Manajemen Pengumuman & Call for Papers Jurnal
+    Route::prefix('admin/announcements')->name('announcements.')->group(function () {
+        Route::get('/', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'index'])->name('index');
+        Route::get('/create', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'create'])->name('create');
+        Route::post('/', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}/toggle', [\Modules\Journals\Http\Controllers\AdminAnnouncementController::class, 'toggleStatus'])->name('toggle');
+    });
 });

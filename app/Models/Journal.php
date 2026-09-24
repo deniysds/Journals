@@ -69,10 +69,18 @@ class Journal extends Model
     }
 
     /**
+     * Relationship to Journal Announcements & Call for Papers.
+     */
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(JournalAnnouncement::class, 'journal_id');
+    }
+
+    /**
      * Check if journal has active relations that prevent deletion.
      */
     public function hasActiveRelations(): bool
     {
-        return $this->editorialBoards()->exists() || $this->submissions()->exists();
+        return $this->editorialBoards()->exists() || $this->submissions()->exists() || $this->announcements()->exists();
     }
 }
