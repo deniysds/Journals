@@ -76,7 +76,7 @@ class AdminAnnouncementController extends Controller
         $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(5);
         $validated['created_by'] = $user?->id;
         $validated['is_pinned'] = $request->boolean('is_pinned');
-        $validated['is_published'] = $request->boolean('is_published', true);
+        $validated['is_published'] = $request->boolean('is_published');
         $validated['published_at'] = $validated['is_published'] ? now() : null;
 
         if ($request->hasFile('banner_image')) {

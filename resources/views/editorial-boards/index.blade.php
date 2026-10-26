@@ -208,6 +208,17 @@
                 var datatableEl = document.getElementById('kt_datatable_editorial_boards');
                 if (!datatableEl) return null;
 
+                if (datatableEl.hasAttribute('data-kt-datatable-initialized')) {
+                    if (typeof KTDataTable.getInstance === 'function') {
+                        var oldInstance = KTDataTable.getInstance(datatableEl);
+                        if (oldInstance && typeof oldInstance.dispose === 'function') {
+                            oldInstance.dispose();
+                        }
+                    }
+                    datatableEl.removeAttribute('data-kt-datatable-initialized');
+                    if (datatableEl.instance) delete datatableEl.instance;
+                }
+
                 var datatable = new KTDataTable(datatableEl, {
                     apiEndpoint: "{{ route('editorial-boards.datatables') }}",
                     requestMethod: 'GET',
@@ -231,7 +242,7 @@
                         select: {
                             render: function (value, row) {
                                 var rowId = row ? row.id : '';
-                                return '<input class="kt-checkbox kt-checkbox-sm row-checkbox" type="checkbox" value="' + rowId + '" onchange="updateBulkDeleteState()">';
+                                return '<input class="kt-checkbox kt-checkbox-sm row-checkbox" data-kt-datatable-row-check="true" type="checkbox" value="' + rowId + '" />';
                             }
                         },
                         name: {
@@ -294,23 +305,48 @@
 
         KTDatatableEditorialBoards.init();
 
-        document.getElementById('check_all')?.addEventListener('change', function () {
-            var checkboxes = document.querySelectorAll('.row-checkbox:not([disabled])');
-            checkboxes.forEach(cb => cb.checked = this.checked);
-            updateBulkDeleteState();
+        const searchInput = document.getElementById('search_editorial_boards');
+        const exportBtn = document.getElementById('export_btn');
+        if (searchInput && exportBtn) {
+            searchInput.addEventListener('input', function () {
+                exportBtn.href = "{{ route('editorial-boards.export') }}?search=" + encodeURIComponent(this.value);
+            });
+        }
+
+        document.addEventListener('change', function (e) {
+            if (e.target.matches('.row-checkbox, #check_all')) {
+                updateBulkDeleteState();
+            }
         });
 
-        function updateBulkDeleteState() {
-            var selected = document.querySelectorAll('.row-checkbox:checked');
-            var btn = document.getElementById('bulk_delete_btn');
-            var countEl = document.getElementById('selected_count');
+        const datatableContainer = document.getElementById('kt_datatable_editorial_boards');
+        if (datatableContainer) {
+            datatableContainer.addEventListener('changed', updateBulkDeleteState);
+            datatableContainer.addEventListener('checked', updateBulkDeleteState);
+            datatableContainer.addEventListener('unchecked', updateBulkDeleteState);
+        }
 
-            if (selected.length > 0) {
-                btn?.classList.remove('hidden');
-                if (countEl) countEl.innerText = selected.length;
-            } else {
-                btn?.classList.add('hidden');
-                if (countEl) countEl.innerText = '0';
+        function getSelectedIds() {
+            const checkboxes = document.querySelectorAll('#kt_datatable_editorial_boards tbody input.row-checkbox:checked');
+            const ids = [];
+            checkboxes.forEach(cb => {
+                if (cb.value) ids.push(cb.value);
+            });
+            return ids;
+        }
+
+        function updateBulkDeleteState() {
+            const ids = getSelectedIds();
+            const bulkBtn = document.getElementById('bulk_delete_btn');
+            const countSpan = document.getElementById('selected_count');
+
+            if (bulkBtn && countSpan) {
+                countSpan.textContent = ids.length;
+                if (ids.length > 0) {
+                    bulkBtn.classList.remove('hidden');
+                } else {
+                    bulkBtn.classList.add('hidden');
+                }
             }
         }
 
@@ -325,34 +361,37 @@
                 confirmButtonText: lang.yesDelete
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch("{{ route('editorial-boards.destroy', ':id') }}".replace(':id', id), {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
+                    $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+                    $.ajax({
+                        url: "{{ route('editorial-boards.destroy', ':id') }}".replace(':id', id),
+                        type: 'DELETE',
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire(lang.deleted, res.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire(lang.error, res.message, 'error');
+                            }
+                        },
+                        error: function (err) {
+                            const msg = (err.responseJSON && err.responseJSON.message) ? err.responseJSON.message : (lang.error || 'Network error');
+                            Swal.fire(lang.error, msg, 'error');
                         }
-                    }).then(res => res.json()).then(data => {
-                        if (data.success) {
-                            Swal.fire(lang.deleted, data.message, 'success').then(() => location.reload());
-                        } else {
-                            Swal.fire(lang.error, data.message, 'error');
-                        }
-                    }).catch(() => Swal.fire(lang.error, 'Network error', 'error'));
+                    });
                 }
             });
         }
 
         function bulkDelete() {
-            var selected = Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.value);
+            const ids = getSelectedIds();
 
-            if (selected.length === 0) {
+            if (ids.length === 0) {
                 Swal.fire(lang.notice, lang.noEligibleItems, 'info');
                 return;
             }
 
             Swal.fire({
                 title: lang.areYouSure,
-                text: lang.deleteConfirmText,
+                text: `${ids.length} item(s) selected. ${lang.deleteConfirmText}`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#e11d48',
@@ -360,21 +399,23 @@
                 confirmButtonText: lang.yesDeleteSelected
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch("{{ route('editorial-boards.bulk-destroy') }}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
+                    $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+                    $.ajax({
+                        url: "{{ route('editorial-boards.bulk-destroy') }}",
+                        type: 'POST',
+                        data: { ids: ids },
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire(lang.deleted, res.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire(lang.error, res.message, 'error');
+                            }
                         },
-                        body: JSON.stringify({ ids: selected })
-                    }).then(res => res.json()).then(data => {
-                        if (data.success) {
-                            Swal.fire(lang.deleted, data.message, 'success').then(() => location.reload());
-                        } else {
-                            Swal.fire(lang.error, data.message, 'error');
+                        error: function (err) {
+                            const msg = (err.responseJSON && err.responseJSON.message) ? err.responseJSON.message : (lang.error || 'Network error');
+                            Swal.fire(lang.error, msg, 'error');
                         }
-                    }).catch(() => Swal.fire(lang.error, 'Network error', 'error'));
+                    });
                 }
             });
         }
