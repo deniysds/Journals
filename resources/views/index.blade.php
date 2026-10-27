@@ -37,7 +37,7 @@
                         <thead>
                             <tr>
                                 <th scope="col" class="w-14" data-kt-datatable-column="select">
-                                    <input class="kt-checkbox kt-checkbox-sm" id="check_all" data-kt-datatable-check="true"
+                                    <input class="kt-checkbox kt-checkbox-sm" id="check_all"
                                         type="checkbox" />
                                 </th>
                                 <th scope="col" class="w-48" data-kt-datatable-column="name">
@@ -171,7 +171,7 @@
                                     return '<input class="kt-checkbox kt-checkbox-sm opacity-30 cursor-not-allowed" disabled type="checkbox" title="' + lang.cannotDeleteHasRelations + '" />';
                                 }
                                 var rowId = row ? row.id : '';
-                                return '<input class="kt-checkbox kt-checkbox-sm row-checkbox" data-kt-datatable-row-check="true" type="checkbox" value="' + rowId + '" />';
+                                return '<input class="kt-checkbox kt-checkbox-sm row-checkbox" type="checkbox" value="' + rowId + '" />';
                             }
                         },
                         name: {
@@ -258,7 +258,25 @@
         }
 
         document.addEventListener('change', function (e) {
-            if (e.target.matches('.row-checkbox, #check_all')) {
+            if (e.target && (e.target.id === 'check_all' || e.target.matches('#check_all'))) {
+                const isChecked = e.target.checked;
+                const container = document.getElementById('kt_datatable_journals');
+                if (container) {
+                    const rowCheckboxes = container.querySelectorAll('tbody input.row-checkbox:not(:disabled)');
+                    rowCheckboxes.forEach(cb => {
+                        cb.checked = isChecked;
+                        const tr = cb.closest('tr');
+                        if (tr) {
+                            tr.classList.toggle('checked', isChecked);
+                        }
+                    });
+                }
+                updateBulkDeleteState();
+            } else if (e.target && e.target.matches('#kt_datatable_journals tbody input.row-checkbox')) {
+                const tr = e.target.closest('tr');
+                if (tr) {
+                    tr.classList.toggle('checked', e.target.checked);
+                }
                 updateBulkDeleteState();
             }
         });
@@ -271,7 +289,7 @@
         }
 
         function getSelectedIds() {
-            const checkboxes = document.querySelectorAll('#kt_datatable_journals tbody input.row-checkbox:checked');
+            const checkboxes = document.querySelectorAll('#kt_datatable_journals tbody input.row-checkbox:checked:not(:disabled)');
             const ids = [];
             checkboxes.forEach(cb => {
                 if (cb.value) ids.push(cb.value);
@@ -290,6 +308,24 @@
                     bulkBtn.classList.remove('hidden');
                 } else {
                     bulkBtn.classList.add('hidden');
+                }
+            }
+
+            // Sync check_all state with visible row checkboxes
+            const checkAll = document.getElementById('check_all');
+            if (checkAll) {
+                const allRows = document.querySelectorAll('#kt_datatable_journals tbody input.row-checkbox:not(:disabled)');
+                const checkedRows = document.querySelectorAll('#kt_datatable_journals tbody input.row-checkbox:checked:not(:disabled)');
+
+                if (allRows.length > 0 && checkedRows.length === allRows.length) {
+                    checkAll.checked = true;
+                    checkAll.indeterminate = false;
+                } else if (checkedRows.length > 0) {
+                    checkAll.checked = false;
+                    checkAll.indeterminate = true;
+                } else {
+                    checkAll.checked = false;
+                    checkAll.indeterminate = false;
                 }
             }
         }

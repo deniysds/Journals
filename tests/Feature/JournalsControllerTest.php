@@ -83,4 +83,33 @@ class JournalsControllerTest extends TestCase
         $response->assertStatus(422);
         $response->assertJson(['success' => false]);
     }
+
+    public function test_can_view_editorial_boards_index_page(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('editorial-boards.index'));
+        $response->assertStatus(200);
+        $response->assertViewIs('journals::editorial-boards.index');
+    }
+
+    public function test_can_bulk_delete_editorial_board_members(): void
+    {
+        $journal = Journal::create(['name' => 'Demo Journal', 'slug' => 'demo-journal']);
+        $m1 = $journal->editorialBoards()->create([
+            'role' => 'Editor-in-Chief',
+            'name' => 'Member One',
+        ]);
+        $m2 = $journal->editorialBoards()->create([
+            'role' => 'Managing Editor',
+            'name' => 'Member Two',
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson(route('editorial-boards.bulk-destroy'), [
+            'ids' => [$m1->id, $m2->id],
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+        $this->assertSoftDeleted('journal_editorial_boards', ['id' => $m1->id]);
+        $this->assertSoftDeleted('journal_editorial_boards', ['id' => $m2->id]);
+    }
 }
