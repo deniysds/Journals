@@ -76,6 +76,45 @@ class PublishingHubTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_administrator_role_can_always_access_publishing_hub_even_without_direct_permissions(): void
+    {
+        $adminRole = Role::firstOrCreate(['name' => 'administrator', 'guard_name' => 'web']);
+        $admin = User::factory()->create();
+        $admin->assignRole($adminRole);
+
+        Journal::create(['name' => 'Admin Monitored Journal', 'slug' => 'admin-journal', 'is_active' => true]);
+
+        $response = $this->actingAs($admin)->get(route('journals.publishing-hub'));
+        $response->assertStatus(200);
+        $response->assertSee('Admin Monitored Journal');
+    }
+
+    public function test_journal_manager_and_editor_in_chief_roles_can_access_publishing_hub(): void
+    {
+        $jmRole = Role::firstOrCreate(['name' => 'journal-manager', 'guard_name' => 'web']);
+        $jm = User::factory()->create();
+        $jm->assignRole($jmRole);
+
+        $eicRole = Role::firstOrCreate(['name' => 'editor-in-chief', 'guard_name' => 'web']);
+        $eic = User::factory()->create();
+        $eic->assignRole($eicRole);
+
+        Journal::create(['name' => 'Ecosystem Journal', 'slug' => 'ecosystem-journal', 'is_active' => true]);
+
+        $this->actingAs($jm)->get(route('journals.publishing-hub'))->assertStatus(200);
+        $this->actingAs($eic)->get(route('journals.publishing-hub'))->assertStatus(200);
+    }
+
+    public function test_reader_role_is_strictly_forbidden_from_accessing_publishing_hub(): void
+    {
+        $readerRole = Role::firstOrCreate(['name' => 'reader', 'guard_name' => 'web']);
+        $reader = User::factory()->create();
+        $reader->assignRole($readerRole);
+
+        $response = $this->actingAs($reader)->get(route('journals.publishing-hub'));
+        $response->assertStatus(403);
+    }
+
     public function test_publishing_hub_allows_switching_selected_journal(): void
     {
         $j1 = Journal::create(['name' => 'Journal Alpha', 'slug' => 'journal-alpha', 'is_active' => true]);

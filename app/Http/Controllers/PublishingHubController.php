@@ -17,7 +17,28 @@ class PublishingHubController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        if (!$user || !$user->can('journals.read')) {
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $allowedRoles = [
+            'administrator',
+            'admin',
+            'Super Admin',
+            'journal-admin',
+            'journal-manager',
+            'editor-in-chief',
+            'editor',
+            'section-editor',
+            'production-admin',
+        ];
+
+        $hasAccess = $user->hasRole($allowedRoles)
+            || $user->can('journals.read')
+            || $user->can('issues.read')
+            || $user->can('submissions.read');
+
+        if (!$hasAccess) {
             abort(403, 'Sorry! You are not allowed to access the Publishing Hub.');
         }
 

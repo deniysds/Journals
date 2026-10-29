@@ -19,9 +19,14 @@
                 "permission": "journals.read",
                 "roles": [
                     "administrator",
-                    "editor-in-chief",
+                    "admin",
+                    "Super Admin",
+                    "journal-admin",
                     "journal-manager",
-                    "editor"
+                    "editor-in-chief",
+                    "editor",
+                    "section-editor",
+                    "production-admin"
                 ]
             },
             {
@@ -33,8 +38,12 @@
                 "permission": "journals.read",
                 "roles": [
                     "administrator",
+                    "admin",
+                    "Super Admin",
+                    "journal-admin",
+                    "journal-manager",
                     "editor-in-chief",
-                    "journal-manager"
+                    "editor"
                 ],
                 "sub": [
                     {
@@ -45,9 +54,14 @@
                         "permission": "journals.read",
                         "roles": [
                             "administrator",
-                            "editor-in-chief",
+                            "admin",
+                            "Super Admin",
+                            "journal-admin",
                             "journal-manager",
-                            "editor"
+                            "editor-in-chief",
+                            "editor",
+                            "section-editor",
+                            "production-admin"
                         ]
                     },
                     {
@@ -58,8 +72,12 @@
                         "permission": "journals.read",
                         "roles": [
                             "administrator",
+                            "admin",
+                            "Super Admin",
+                            "journal-admin",
+                            "journal-manager",
                             "editor-in-chief",
-                            "journal-manager"
+                            "editor"
                         ]
                     },
                     {
@@ -70,8 +88,12 @@
                         "permission": "journals.read",
                         "roles": [
                             "administrator",
+                            "admin",
+                            "Super Admin",
+                            "journal-admin",
+                            "journal-manager",
                             "editor-in-chief",
-                            "journal-manager"
+                            "editor"
                         ]
                     }
                 ]
