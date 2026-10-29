@@ -56,6 +56,21 @@ return [
     'editorial_board_member' => 'Editorial Board Member',
     'advisory_board' => 'International Advisory Board',
 
+    // Publishing Hub
+    'publishing_hub' => 'Publishing Hub',
+    'publishing_hub_title' => 'Journal Publishing Hub & Guided Workflow',
+    'publishing_hub_subtitle' => 'Unified end-to-end guidance from journal setup, editorial board, issue creation, manuscript review, to public publication.',
+    'select_active_journal' => 'Select Active Journal',
+    'publishing_readiness' => 'Publishing Readiness',
+    'step_1_title' => 'Journal Profile & Identity',
+    'step_2_title' => 'Editorial Board & Reviewers',
+    'step_3_title' => 'Issue Creation',
+    'step_4_title' => 'Manuscripts & Review Workflow',
+    'step_5_title' => 'Layout & Final Publication',
+    'ready_to_publish' => 'Ready to Publish',
+    'published' => 'Published',
+    'draft' => 'Draft',
+
     // Messages
     'created_success' => 'Journal created successfully.',
     'updated_success' => 'Journal updated successfully.',

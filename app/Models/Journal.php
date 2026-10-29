@@ -77,10 +77,19 @@ class Journal extends Model
     }
 
     /**
+     * Relationship to Issues.
+     */
+    public function issues(): HasMany
+    {
+        return $this->hasMany(\Modules\Issues\Models\Issue::class, 'journal_id');
+    }
+
+    /**
      * Check if journal has active relations that prevent deletion.
      */
     public function hasActiveRelations(): bool
     {
-        return $this->editorialBoards()->exists() || $this->submissions()->exists() || $this->announcements()->exists();
+        $hasIssues = \Illuminate\Support\Facades\Schema::hasTable('issues') && $this->issues()->exists();
+        return $this->editorialBoards()->exists() || $this->submissions()->exists() || $this->announcements()->exists() || $hasIssues;
     }
 }

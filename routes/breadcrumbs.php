@@ -32,3 +32,8 @@ Breadcrumbs::for('editorial-boards', function (BreadcrumbTrail $trail) {
     $trail->parent('journals');
     $trail->push(__('journals::app.editorial_board'), route('editorial-boards.index'));
 });
+
+// Publishing Hub Breadcrumb
+Breadcrumbs::for('journals.publishing-hub', function (BreadcrumbTrail $trail) {
+    $trail->push(__('journals::app.publishing_hub') ?: 'Alur Penerbitan Jurnal', route('journals.publishing-hub'));
+});

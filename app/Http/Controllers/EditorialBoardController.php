@@ -49,6 +49,11 @@ class EditorialBoardController extends Controller
 
         $member = $this->editorialBoardService->addMember($request->validated());
 
+        if ($request->filled('redirect_to')) {
+            return redirect($request->input('redirect_to'))
+                ->with('success', __('journals::app.created_success'));
+        }
+
         return redirect()->route('journals.show', $member->journal_id)
             ->with('success', __('journals::app.created_success'));
     }

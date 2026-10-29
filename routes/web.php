@@ -3,8 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Journals\Http\Controllers\EditorialBoardController;
 use Modules\Journals\Http\Controllers\JournalsController;
+use Modules\Journals\Http\Controllers\PublishingHubController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Pusat Alur & Pintasan Penerbitan Jurnal (Publishing Hub)
+    Route::get('publishing-hub', [PublishingHubController::class, 'index'])->name('journals.publishing-hub');
+    Route::get('journals/publishing-hub', [PublishingHubController::class, 'index']);
+
     // Journals Datatable, Bulk Actions & Export
     Route::get('journals/datatables', [JournalsController::class, 'dataForDatatables'])->name('journals.datatables');
     Route::post('journals/bulk-destroy', [JournalsController::class, 'bulkDestroy'])->name('journals.bulk-destroy');

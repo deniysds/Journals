@@ -56,6 +56,21 @@ return [
     'editorial_board_member' => 'Anggota Tim Redaksi',
     'advisory_board' => 'Dewan Penasihat Internasional',
 
+    // Publishing Hub (Alur Penerbitan Terpadu)
+    'publishing_hub' => 'Alur Penerbitan',
+    'publishing_hub_title' => 'Alur & Pintasan Penerbitan Jurnal',
+    'publishing_hub_subtitle' => 'Panduan terpadu satu pintu dari inisiasi jurnal, dewan redaksi, pembuatan edisi, review naskah, hingga terbit publik.',
+    'select_active_journal' => 'Pilih Jurnal yang Dikelola',
+    'publishing_readiness' => 'Kesiapan Penerbitan',
+    'step_1_title' => 'Profil & Identitas Jurnal',
+    'step_2_title' => 'Dewan Redaksi & Reviewer',
+    'step_3_title' => 'Pembuatan Edisi / Issue',
+    'step_4_title' => 'Naskah & Penelaahan (Review)',
+    'step_5_title' => 'Penataan & Publikasi Terbitan',
+    'ready_to_publish' => 'Siap Diterbitkan',
+    'published' => 'Sudah Terbit',
+    'draft' => 'Draf / Persiapan',
+
     // Messages
     'created_success' => 'Jurnal berhasil ditambahkan.',
     'updated_success' => 'Jurnal berhasil diperbarui.',

@@ -11,6 +11,20 @@
     "menu": {
         "main": [
             {
+                "title": "Alur Penerbitan",
+                "path": "journals.publishing-hub",
+                "icon": "ki-filled ki-rocket text-lg",
+                "classes": "",
+                "attributes": [],
+                "permission": "journals.read",
+                "roles": [
+                    "administrator",
+                    "editor-in-chief",
+                    "journal-manager",
+                    "editor"
+                ]
+            },
+            {
                 "title": "Journals",
                 "path": "journals",
                 "icon": "ki-filled ki-book text-lg",
@@ -23,6 +37,19 @@
                     "journal-manager"
                 ],
                 "sub": [
+                    {
+                        "title": "Alur Penerbitan (Hub)",
+                        "path": "journals.publishing-hub",
+                        "classes": "",
+                        "attributes": [],
+                        "permission": "journals.read",
+                        "roles": [
+                            "administrator",
+                            "editor-in-chief",
+                            "journal-manager",
+                            "editor"
+                        ]
+                    },
                     {
                         "title": "Journals List",
                         "path": "journals",
